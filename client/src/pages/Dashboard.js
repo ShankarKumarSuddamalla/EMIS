@@ -155,7 +155,6 @@ const Dashboard = () => {
               </NavLink>
             </li>
           )}
-
           <NavLink className="logout" to="/homepage">
             Logout
           </NavLink>

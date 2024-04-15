@@ -438,6 +438,31 @@ app.get("/api/getvideo/:type/:id", async (req, res) => {
   }
 });
 
+app.get("/api/searchvideo/:id", async (req, res) => {
+  try {
+    const vid = await video.find({ title: { $regex: req.params.id } });
+    res.status(200).json(vid);
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
+});
+
+app.get("/api/getScholarshipData/:id", async (req, res) => {    
+    try {
+        const student = await Stud.find({name: req.params.id});
+        if(student.length == 0){
+            return res.status(200).json({scholarship: false, aggregate:0});
+        }
+        const aggregate =  student[0].aggr;
+        if(aggregate >= 7.5){
+            return res.status(200).json({scholarship: true, aggregate:aggregate});
+        }
+        return res.status(200).json({scholarship: false, aggregate:aggregate});
+    } catch (err) {
+        res.status(404).json({ message: err.message });
+    }
+}) ; 
+
 app.get("/api/getDashboardData", async (req, res) => {
   try {
     const districts = await District.find({});
@@ -458,26 +483,30 @@ app.get("/api/getDashboardData", async (req, res) => {
     //     },
     //   ],
     // },
-    const noOfSchoolsinDistrict = await Promise.all( districts.map(async (d) => {
-      const count = await School.countDocuments({ distid: d._id });
-      return count;
-    }));
+    const noOfSchoolsinDistrict = await Promise.all(
+      districts.map(async (d) => {
+        const count = await School.countDocuments({ distid: d._id });
+        return count;
+      })
+    );
     const graph1Data = {
       labels: districts.map((d) => d.name),
       datasets: [
         {
           label: "No of Schools",
-         data: noOfSchoolsinDistrict,
+          data: noOfSchoolsinDistrict,
           borderWidth: 1,
         },
       ],
     };
 
     // second chart is a bargraph showing the no of Faculty in each district
-    const noOfFacultyinDistrict = await Promise.all( districts.map(async (d) => {
-      const count = await Faculty.countDocuments({ distid: d._id });
-      return count;
-    }));
+    const noOfFacultyinDistrict = await Promise.all(
+      districts.map(async (d) => {
+        const count = await Faculty.countDocuments({ distid: d._id });
+        return count;
+      })
+    );
     const graph2Data = {
       labels: districts.map((d) => d.name),
       datasets: [
@@ -489,10 +518,12 @@ app.get("/api/getDashboardData", async (req, res) => {
       ],
     };
     // third chart is a bargraph showing the no of Faculty in each School
-    const noOfFacultyinSchool = await Promise.all(schools.map(async (s) => {
+    const noOfFacultyinSchool = await Promise.all(
+      schools.map(async (s) => {
         const count = await Faculty.countDocuments({ schoolid: s._id });
-      return count;
-    } ));
+        return count;
+      })
+    );
     const graph3Data = {
       labels: schools.map((s) => s.name),
       datasets: [
@@ -504,10 +535,12 @@ app.get("/api/getDashboardData", async (req, res) => {
       ],
     };
     // fourth chart is a bargraph showing the no of Students in each district
-    const noOfStudentsinDistrict = await Promise.all( districts.map(async (d) => {
-      const count = await Stud.countDocuments({ distid: d._id });
-      return count;
-    }));
+    const noOfStudentsinDistrict = await Promise.all(
+      districts.map(async (d) => {
+        const count = await Stud.countDocuments({ distid: d._id });
+        return count;
+      })
+    );
     const graph4Data = {
       labels: districts.map((d) => d.name),
       datasets: [
@@ -519,10 +552,12 @@ app.get("/api/getDashboardData", async (req, res) => {
       ],
     };
     // fifth chart is a bargraph showing the no of Students in each School
-    const noOfStudentsinSchool = await Promise.all(schools.map(async (s) => {
+    const noOfStudentsinSchool = await Promise.all(
+      schools.map(async (s) => {
         const count = await Stud.countDocuments({ schoolid: s._id });
         return count;
-    }));
+      })
+    );
     const graph5Data = {
       labels: schools.map((s) => s.name),
       datasets: [
@@ -533,7 +568,11 @@ app.get("/api/getDashboardData", async (req, res) => {
         },
       ],
     };
-    return res.status(200).json({ data: [graph1Data, graph2Data,graph3Data,graph4Data,graph5Data] });
+    return res
+      .status(200)
+      .json({
+        data: [graph1Data, graph2Data, graph3Data, graph4Data, graph5Data],
+      });
   } catch (err) {
     res.status(404).json({ message: err.message });
   }

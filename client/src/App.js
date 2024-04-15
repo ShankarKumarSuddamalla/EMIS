@@ -27,6 +27,7 @@ import AddVideo from './pages/addVideo';
 import AllVideos from './pages/allVideos';
 import DisplayVideo from './pages/displayVideo';
 import SchoolLogin from './pages/schoolLogin';
+import ScholarshipPage from './pages/ScholarshipPage';
 
 
 
@@ -62,6 +63,7 @@ const App = () => {
           <Route path='/addvideo/:type/:id' element={<AddVideo/>}/>
           <Route path='/allvideo/:type/:id' element={<AllVideos/>}/>
           <Route path='/displayvideo/:type/:id' element={<DisplayVideo/>}/>
+          <Route path = '/scholarship' element={<ScholarshipPage/>}/>
           
         </Routes>
       </BrowserRouter>

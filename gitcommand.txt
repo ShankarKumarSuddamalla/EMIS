@@ -1,3 +1,0 @@
-press +
-git commit -m 'student'
-git push origin sridhar
